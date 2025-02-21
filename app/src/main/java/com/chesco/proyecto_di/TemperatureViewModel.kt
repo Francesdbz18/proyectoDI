@@ -8,6 +8,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 
+//ViewModel para temperaturas.
 class TemperatureViewModel : ViewModel() {
     var temperatureCelsius by mutableFloatStateOf(0f)
         private set

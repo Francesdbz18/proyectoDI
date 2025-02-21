@@ -1,7 +1,6 @@
 package com.chesco.proyecto_di
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,104 +13,29 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.chesco.proyecto_di.TemperatureViewModel
+import androidx.navigation.compose.rememberNavController
 
-
-@Composable
-fun WeatherScreen() {
-    LazyColumn {
-        item {
-            val isFahrenheit = fahrenheitCheckbox()
-            var temperatura = temperatureSlider()
-            var tFahrenheit = 0
-            if (!isFahrenheit) tFahrenheit = convert(temperatura, isFahrenheit)
-        }
-    }
-}
-
-fun convert(temperatura: Int, fahrenheit: Boolean): Int {
-    var tConvertida = 0
-    if (fahrenheit) tConvertida = (temperatura - 32) * 5/9
-    else tConvertida = (temperatura * (9/5)) + 32
-    return tConvertida
-}
-
-@Composable
-fun fahrenheitCheckbox(): Boolean {
-    var checked by remember { mutableStateOf(false) }
-    Row(
-        modifier = Modifier.padding(20.dp, 0.dp, 20.dp, 0.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Checkbox(
-            checked = checked,
-            onCheckedChange = { checked = it }
-        )
-        Text("Entrada en ºF")
-    }
-    return checked
-}
-
-@Composable
-fun temperatureSlider(): Int {
-    var sliderPosition by remember { mutableFloatStateOf(0f) }
-    Column (
-        Modifier.padding(20.dp, 0.dp, 20.dp, 0.dp)){
-        Slider(
-            value = sliderPosition,
-            onValueChange = { sliderPosition = it},
-            valueRange = -30f..55f
-        )
-    }
-    return sliderPosition.toInt()
-}
-
-@Composable
-fun IconoTemperatura(temperatura: Int){
-    if (temperatura <= 12 && temperatura >= -30) {
-        Icon(
-            painter = painterResource(id = R.drawable.ac_unit),
-            contentDescription = "Localized description",
-        )
-    } else if (temperatura in 13..25) {
-        Icon(
-            painter = painterResource(id = R.drawable.cloud),
-            contentDescription = "Localized description",
-        )
-    }  else if (temperatura in 26..55) {
-        Icon(
-            painter = painterResource(id = R.drawable.sunny),
-            contentDescription = "Localized description",
-        )
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TemperatureContent(
-    viewModel: TemperatureViewModel = viewModel()
+    viewModel: TemperatureViewModel = viewModel(),
 ) {
+    val temperatura = viewModel.temperatureCelsius
+    val isFahrenheit = viewModel.isFahrenheit
+    val temperaturasGuardadas = viewModel.listTemperatures
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -120,50 +44,65 @@ fun TemperatureContent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(10.dp))
-        Text("Conversión de temperatura", style = MaterialTheme.typography.headlineSmall)//revisar la tipografia
+        Text(
+            "Conversión de temperatura",
+            style = MaterialTheme.typography.headlineSmall
+        )//revisar la tipografia
         Spacer(modifier = Modifier.height(18.dp))
-        Text("Select Temperature: ${if (Fahrenheit) celsiusAFahrenheit(temperatura.toInt()) else temperatura.toInt()} ${if (Fahrenheit) "°F" else "°C"}", fontSize = 20.sp)
+        Text(
+            "Seleccione la temperatura: ",
+            fontSize = 18.sp
+        )
         Slider(
             value = temperatura,
             onValueChange = { viewModel.updateTemperature(it) },
-            modifier = Modifier .width(280.dp),
+            modifier = Modifier.width(280.dp),
             valueRange = -30f..55f
         )
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text("Celsius", fontSize = 20.sp)
-            Switch(
-                checked = Fahrenheit,
+        Row(
+            modifier = Modifier.padding(20.dp, 0.dp, 20.dp, 0.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Checkbox(
+                checked = isFahrenheit,
                 onCheckedChange = { viewModel.toggleFahrenheit() }
             )
-            Text("Fahrenheit", fontSize = 20.sp)
+            Text("Entrada en ºF")
         }
-        Button(onClick = { viewModel.guardarTemperaturas }) {
-            Text("Guardar Temperatura", fontSize = 18.sp)
+        Text("${if (isFahrenheit) convertir(temperatura.toInt()) else temperatura.toInt()} ${if (isFahrenheit) "°F" else "°C"} ")
+        Button(onClick = { viewModel.saveTemperature() }) {
+            Text("Guardar", fontSize = 18.sp)
         }
-        Spacer(modifier = Modifier.height(19.dp))
-
         Box(
             modifier = Modifier
-                .width(170.dp)
-                .height(170.dp)
-                .background(Color.White),
+                .width(180.dp)
+                .height(170.dp),
             contentAlignment = Alignment.Center
         ) {
             Image(
-                painter = painterResource(id = R.drawable.thermometer),
+                painter = painterResource(id = R.drawable.bigthermostat),
                 contentDescription = "Imagen Termometro",
                 modifier = Modifier.fillMaxSize()
             )
-            Row(){
-                Text("${temperatura.toInt()}°C ",modifier = Modifier .padding(12.dp), fontSize = 20.sp)
+            Row{
+                Text(
+                    "${temperatura.toInt()}°C ",
+                    modifier = Modifier.padding(12.dp),
+                    fontSize = 20.sp
+                )
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("${celsiusAFahrenheit(temperatura.toInt())}°F",modifier = Modifier .padding(12.dp), fontSize = 20.sp)
+                Text(
+                    "${convertir(temperatura.toInt())}°F",
+                    modifier = Modifier.padding(12.dp),
+                    fontSize = 20.sp
+                )
             }
         }
-        Spacer(modifier = Modifier.height(20.dp))
-        LazyColumn(modifier = Modifier.fillMaxWidth(),
+        LazyColumn(
+            modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally) {
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             items(temperaturasGuardadas) { temp ->
                 Row(
                     modifier = Modifier.fillMaxWidth()
@@ -172,10 +111,10 @@ fun TemperatureContent(
                     horizontalArrangement = Arrangement.Center
                 ) {
                     val iconRes = when (temp) {
-                        in -30..12 -> R.drawable.snowflakes
-                        in 13..25 -> R.drawable.thermometerwarm
-                        in 26..55 -> R.drawable.sun
-                        else -> R.drawable.thermometer
+                        in -30..12 -> R.drawable.ac_unit
+                        in 13..25 -> R.drawable.cloud
+                        in 26..55 -> R.drawable.sunny
+                        else -> {R.drawable.ac_unit}
                     }
                     Image(
                         painter = painterResource(id = iconRes),
@@ -183,10 +122,12 @@ fun TemperatureContent(
                         modifier = Modifier.size(64.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("$temp°C / ${celsiusAFahrenheit(temp)}°F", fontSize = 20.sp)
+                    Text("$temp°C / ${convertir(temp)}°F", fontSize = 20.sp)
                 }
             }
         }
     }
 }
+fun convertir(celsius: Int): Int {
+    return ((celsius * 9 / 5) + 32)
 }

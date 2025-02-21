@@ -20,7 +20,7 @@ data class Contacto(
 
 val ciudades = listOf(
     Ciudad(
-        "Madrid, España",
+        "Madrid",
         "112",
         "091",
         "080",
@@ -31,7 +31,7 @@ val ciudades = listOf(
         Contacto("Antonio Avellaneda", "+34 913 423 634", "aavellaneda@splatnot.com")
     ),
     Ciudad(
-        "París, Francia",
+        "París",
         "112",
         "17",
         "18",
@@ -42,7 +42,7 @@ val ciudades = listOf(
         Contacto("François Merlin", "+33 1 45 26 22 46", "fmerlin@splatnot.com")
     ),
     Ciudad(
-        "Londres, Reino Unido",
+        "Londres",
         "999",
         "101",
         "999",
@@ -53,7 +53,7 @@ val ciudades = listOf(
         Contacto("Sarah Louise Taylor", "+44 20 2536 0232", "staylor@splatnot.com")
     ),
     Ciudad(
-        "Porto Alegre, Brasil",
+        "Porto Alegre",
         "190 (Policía), 193 (Bomberos)",
         "190",
         "193",
@@ -64,7 +64,7 @@ val ciudades = listOf(
         Contacto("Maria Fernanda Oliveira Costa", "+55 51 5644 1688", "mfoliveira@splatnot.com")
     ),
     Ciudad(
-        "Acapulco, México",
+        "Acapulco",
         "911",
         "911",
         "911",
@@ -75,7 +75,7 @@ val ciudades = listOf(
         Contacto("Antonio Avellaneda", "+52 744 779 1948", "aavellaneda@splatnot.com")
     ),
     Ciudad(
-        "Vancouver, Canadá",
+        "Vancouver",
         "911",
         "911",
         "911",
@@ -86,7 +86,7 @@ val ciudades = listOf(
         Contacto("David Miller", "+34 913 423 634", "dmiller@splatnot.com")
     ),
     Ciudad(
-        "Houston, Estados Unidos",
+        "Houston",
         "911",
         "713 884 3131",
         "911",
@@ -97,7 +97,7 @@ val ciudades = listOf(
         Contacto("Robinson Hill", "+1 713 555 1291", "rhill@splatnot.com")
     ),
     Ciudad(
-        "Casablanca, Marruecos",
+        "Casablanca",
         "19 (Policía), 15 (Bomberos)",
         "19",
         "15",
@@ -108,7 +108,7 @@ val ciudades = listOf(
         Contacto("Ahmed Ben Youssef El Fassi", "+212 522 449 644", "abenyoussef@splatnot.com")
     ),
     Ciudad(
-        "Osaka, Japón",
+        "Osaka",
         "110 (Policía), 119 (Bomberos y Ambulancias)",
         "110",
         "119",
@@ -119,7 +119,7 @@ val ciudades = listOf(
         Contacto("Takahashi Hiroshi", "+81 6 4882 6632", "thiroshi@splatnot.com")
     ),
     Ciudad(
-        "Melbourne, Australia",
+        "Melbourne",
         "000",
         "000",
         "000",
@@ -130,7 +130,7 @@ val ciudades = listOf(
         Contacto("Emily Johnson", "+61 3 9974 9677", "ejohnson@splatnot.com")
     ),
     Ciudad(
-        "Ankara, Turquía",
+        "Ankara",
         "112",
         "155",
         "110",
@@ -141,7 +141,7 @@ val ciudades = listOf(
         Contacto("Elif Demir", "+90 312 822 70 94", "edemir@splatnot.com")
     ),
     Ciudad(
-        "Dubai, Emiratos Árabes Unidos",
+        "Dubai",
         "999",
         "999",
         "997",
@@ -151,4 +151,20 @@ val ciudades = listOf(
         "+971 4 495 7000",
         Contacto("Khalid Al Maktoum", "+971 4 495 7556", "kalmaktoum@splatnot.com")
     )
+)
+
+//Mapa que relaciona las ciudades con su imagen.
+val cityImages = mapOf(
+    "Madrid" to R.drawable.madrid_image,
+    "París" to R.drawable.paris_image,
+    "Londres" to R.drawable.london,
+    "Porto Alegre" to R.drawable.porto_alegre_image,
+    "Acapulco" to R.drawable.acapulco_image,
+    "Vancouver" to R.drawable.vancouver_image,
+    "Houston" to R.drawable.houston_image,
+    "Casablanca" to R.drawable.casablanca_image,
+    "Osaka" to R.drawable.osaka_image,
+    "Melbourne" to R.drawable.melbourne_image,
+    "Ankara" to R.drawable.ankara_image,
+    "Dubai" to R.drawable.dubai_image
 )

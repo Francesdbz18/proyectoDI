@@ -5,33 +5,37 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.BottomNavigation
+import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material.contentColorFor
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.chesco.proyecto_di.ui.theme.AppTheme
 
 
@@ -49,66 +53,26 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun CustomScaffold() {
+    val navController = rememberNavController()
     Scaffold(
         // Barra superior
         topBar = { CustomTopBar() },
 
         // Barra inferior
-        bottomBar = { CustomBottomBar() },
+        bottomBar = { BottomBar(navController = navController) },
 
         // Contenido principal
-        content = { padding ->
-            CustomContent(padding)
-        }
-    )
-}
-
-@Composable
-fun CustomContent(padding: PaddingValues) {
-    Column(
-        // Modificadores de estilo de la columna
-        modifier = Modifier
-            // Ocupar todo el espacio disponible
-            .fillMaxSize()
-            .padding(padding),
-
-        // Contenido de la aplicación
-        content = {
-            WeatherScreen()
-        }
-    )
-}
-
-@Composable
-fun CustomBottomBar() {
-    BottomAppBar(
-        actions = {
-            Row (modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround){
-                TextButton(onClick = { /* do something */ }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.thermostat_24dp_5f6368_fill0_wght400_grad0_opsz24),
-                        contentDescription = "Temperatura"
-                    )
-                    Text(" Temperatura")
-                }
-                TextButton(onClick = { /* do something */ }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.schedule),
-                        contentDescription = "Localized description",
-                    )
-                    Text(" Hora")
-                }
-                TextButton(onClick = { /* do something */ }) {
-                    Icon(
-                        Icons.Filled.Person,
-                        contentDescription = "Localized description",
-                    )
-                    Text(" Contactos")
-                }
+        content = { innerPadding ->
+            NavHost(
+                navController = navController,
+                startDestination = "temperatura",
+                Modifier.padding(innerPadding)
+            ) {
+                composable("temperatura") { TemperatureContent() }
+                composable("horas") { HoursScreen() }
+                composable("contactos") { ContactsScreen() }
             }
-        },
-        contentColor = colorScheme.primary,
-        containerColor = colorScheme.primaryContainer
+        }
     )
 }
 
@@ -146,6 +110,38 @@ fun CustomTopBar() {
         },
     )
 }
+
+@Composable
+fun BottomBar(navController: NavController) {
+    val items = listOf(
+        BottomNavItem("temperatura", ImageVector.vectorResource(R.drawable.thermostat_24dp_5f6368_fill0_wght400_grad0_opsz24), "Temperatura"),
+        BottomNavItem("horas", ImageVector.vectorResource(R.drawable.schedule), "Hora"),
+        BottomNavItem("contactos", Icons.Filled.Person, "Contactos")
+    )
+    val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
+    BottomNavigation (
+        backgroundColor = MaterialTheme.colorScheme.primaryContainer,
+        contentColor = contentColorFor(MaterialTheme.colorScheme.primaryContainer)
+    ) {
+        items.forEach { item ->
+            BottomNavigationItem(
+                icon = { Icon(item.icon, contentDescription = item.label) },
+                label = { Text(text = item.label, fontSize = 13.sp) },
+                selected = currentRoute == item.route, // Marca la opción activa
+                onClick = {
+                    if (currentRoute != item.route) {
+                        navController.navigate(item.route) {
+                            popUpTo("temperatura") { inclusive = false } // Evita duplicados en el stack
+                            launchSingleTop = true
+                        }
+                    }
+                }
+            )
+        }
+    }
+}
+
+data class BottomNavItem(val route: String, val icon: ImageVector, val label: String)
 
 @Composable
 @Preview
