@@ -32,8 +32,8 @@ class ViewModelHoras : ViewModel() {
         "Casablanca" to "Africa/Casablanca",
         "Osaka" to "Asia/Tokyo",
         "Melbourne" to "Australia/Melbourne",
-        "Ankara" to "Europe/Istanbul",
-        "Dubai" to "Asia/Dubai"
+        "Dubai" to "Asia/Dubai",
+        "Berlín" to "Europe/Madrid"
     )
 
     init {

@@ -31,7 +31,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -57,7 +56,7 @@ fun HoursScreen(viewModel: ViewModelHoras = viewModel()) {
 fun SelectCiudad(viewModel: ViewModelHoras) {
     val ciudades = listOf(
         "Madrid", "París", "Londres", "Porto Alegre", "Acapulco", "Vancouver",
-        "Houston", "Casablanca", "Osaka", "Melbourne", "Ankara", "Dubai"
+        "Houston", "Casablanca", "Osaka", "Melbourne", "Berlín", "Dubai"
     )
 
     var expanded by remember { mutableStateOf(false) }
@@ -68,7 +67,7 @@ fun SelectCiudad(viewModel: ViewModelHoras) {
             onClick = { expanded = !expanded },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(selectedCity)
+            Text(selectedCity, fontSize = 45.sp)
         }
 
         DropdownMenu(
@@ -153,8 +152,7 @@ fun TimePickerWithDialog(viewModel: ViewModelHoras) {
             modifier = Modifier.fillMaxWidth()
         ) {
             Column(
-                modifier = Modifier
-                    .background(color = Color.LightGray.copy(alpha = .3f))
+                modifier = Modifier.background(MaterialTheme.colorScheme.primaryContainer)
                     .padding(top = 28.dp, start = 20.dp, end = 20.dp, bottom = 12.dp),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -182,7 +180,7 @@ fun TimePickerWithDialog(viewModel: ViewModelHoras) {
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         TextButton(onClick = { showDialog = true }) {
-            Text(text = "${LocalTime.of(timeState.hour, timeState.minute)}", fontSize = 30.sp)
+            Text(text = "${LocalTime.of(timeState.hour, timeState.minute)}", fontSize = 50.sp)
         }
         viewModel.actualizarHoraSeleccionada(LocalTime.of(timeState.hour, timeState.minute))
     }

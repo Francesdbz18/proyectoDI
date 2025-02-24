@@ -55,31 +55,15 @@ fun ContactsScreen(viewModel: CiudadViewModel = viewModel()) {
 
             when (servicioSeleccionado) {
                 "Emergencias" -> {
-                    Text(
-                        text = "Emergencias: ${it.emergencias}",
-                        modifier = Modifier.padding(top = 4.dp)
-                    )
                     telefonoseleccionado = it.emergencias
                 }
                 "Policía" -> {
-                    Text(
-                        text = "Policía: ${it.policia}",
-                        modifier = Modifier.padding(top = 4.dp)
-                    )
                     telefonoseleccionado = it.policia
                 }
                 "Bomberos" -> {
-                    Text(
-                        text = "Bomberos: ${it.bomberos}",
-                        modifier = Modifier.padding(top = 4.dp)
-                    )
                     telefonoseleccionado = it.bomberos
                 }
                 "Oficina de Información Turística" -> {
-                    Text(
-                        text = "Oficina de Información Turística: ${it.oficinaInformacionTurismo}",
-                        modifier = Modifier.padding(top = 4.dp)
-                    )
                     telefonoseleccionado = it.oficinaInformacionTurismo
                 }
                 "Contacto" -> {

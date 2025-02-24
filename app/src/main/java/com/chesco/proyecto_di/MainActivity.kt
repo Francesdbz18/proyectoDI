@@ -11,6 +11,7 @@ import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.contentColorFor
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
@@ -65,9 +66,10 @@ fun CustomScaffold() {
         content = { innerPadding ->
             NavHost(
                 navController = navController,
-                startDestination = "temperatura",
+                startDestination = "encuesta",
                 Modifier.padding(innerPadding)
             ) {
+                composable("encuesta") { EncuestaScreen() }
                 composable("temperatura") { TemperatureContent() }
                 composable("horas") { HoursScreen() }
                 composable("contactos") { ContactsScreen() }
@@ -114,9 +116,10 @@ fun CustomTopBar() {
 @Composable
 fun BottomBar(navController: NavController) {
     val items = listOf(
+        BottomNavItem("encuesta", Icons.Filled.AccountBox, "Encuesta"),
+        BottomNavItem("contactos", Icons.Filled.Person, "Contactos"),
         BottomNavItem("temperatura", ImageVector.vectorResource(R.drawable.thermostat_24dp_5f6368_fill0_wght400_grad0_opsz24), "Temperatura"),
-        BottomNavItem("horas", ImageVector.vectorResource(R.drawable.schedule), "Hora"),
-        BottomNavItem("contactos", Icons.Filled.Person, "Contactos")
+        BottomNavItem("horas", ImageVector.vectorResource(R.drawable.schedule), "Hora")
     )
     val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
     BottomNavigation (
@@ -126,12 +129,12 @@ fun BottomBar(navController: NavController) {
         items.forEach { item ->
             BottomNavigationItem(
                 icon = { Icon(item.icon, contentDescription = item.label) },
-                label = { Text(text = item.label, fontSize = 13.sp) },
-                selected = currentRoute == item.route, // Marca la opción activa
+                label = { Text(text = item.label, fontSize = 11.5.sp) },
+                selected = currentRoute == item.route,
                 onClick = {
                     if (currentRoute != item.route) {
                         navController.navigate(item.route) {
-                            popUpTo("temperatura") { inclusive = false } // Evita duplicados en el stack
+                            popUpTo("encuesta") { inclusive = false }
                             launchSingleTop = true
                         }
                     }
