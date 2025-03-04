@@ -4,38 +4,19 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material.BottomNavigation
-import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material.contentColorFor
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountBox
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.chesco.proyecto_di.ui.theme.AppTheme
 
@@ -53,103 +34,48 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun CustomScaffold() {
+fun CustomScaffold(
+    viewModel: MainGeneradorViewModel = viewModel(),
+    navController: NavHostController = rememberNavController()
+) {
     val navController = rememberNavController()
     Scaffold(
         // Barra superior
-        topBar = { CustomTopBar() },
+        topBar = { CustomTopBar() }
 
-        // Barra inferior
-        bottomBar = { BottomBar(navController = navController) },
+    )
 
-        // Contenido principal
-        content = { innerPadding ->
-            NavHost(
-                navController = navController,
-                startDestination = "encuesta",
-                Modifier.padding(innerPadding)
-            ) {
-                composable("encuesta") { EncuestaScreen() }
-                composable("temperatura") { TemperatureContent() }
-                composable("horas") { HoursScreen() }
-                composable("contactos") { ContactsScreen() }
+    // Contenido principal
+    { innerPadding ->
+        val uiState by viewModel.uiState.collectAsState()
+        NavHost(
+            navController = navController,
+            startDestination = "generador",
+            Modifier.padding(innerPadding)
+        ) {
+            composable("generador") {
+                GeneradorScreen(uiState, navController, {
+                    viewModel.update()
+                }, {
+                    viewModel.restart()
+                })
+            }
+            composable("suerte") {
+                SuerteScreen(uiState) {
+                    navController.navigate("generador")
+                    viewModel.restart()
+                }
             }
         }
-    )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomTopBar() {
     CenterAlignedTopAppBar(
-        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-            containerColor = colorScheme.surfaceContainer,
-            titleContentColor = colorScheme.surface,
-        ),
         title = {
-            Image(
-                painter = painterResource(id = R.drawable.splatnot),
-                contentDescription = "Flecha",
-                modifier = Modifier
-                    .size(100.dp)
-            )
-        },
-        navigationIcon = {
-            IconButton(onClick = {}) {
-                Icon(
-                    imageVector = Icons.Filled.AccountCircle,
-                    contentDescription = "Localized description"
-                )
-            }
-        },
-        actions = {
-            IconButton(onClick = { /* do something */ }) {
-                Icon(
-                    imageVector = Icons.Filled.Settings,
-                    contentDescription = "Localized description"
-                )
-            }
-        },
-    )
-}
-
-@Composable
-fun BottomBar(navController: NavController) {
-    val items = listOf(
-        BottomNavItem("encuesta", Icons.Filled.AccountBox, "Encuesta"),
-        BottomNavItem("contactos", Icons.Filled.Person, "Contactos"),
-        BottomNavItem("temperatura", ImageVector.vectorResource(R.drawable.thermostat_24dp_5f6368_fill0_wght400_grad0_opsz24), "Temperatura"),
-        BottomNavItem("horas", ImageVector.vectorResource(R.drawable.schedule), "Hora")
-    )
-    val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
-    BottomNavigation (
-        backgroundColor = MaterialTheme.colorScheme.primaryContainer,
-        contentColor = contentColorFor(MaterialTheme.colorScheme.primaryContainer)
-    ) {
-        items.forEach { item ->
-            BottomNavigationItem(
-                icon = { Icon(item.icon, contentDescription = item.label) },
-                label = { Text(text = item.label, fontSize = 11.5.sp) },
-                selected = currentRoute == item.route,
-                onClick = {
-                    if (currentRoute != item.route) {
-                        navController.navigate(item.route) {
-                            popUpTo("encuesta") { inclusive = false }
-                            launchSingleTop = true
-                        }
-                    }
-                }
-            )
+            Text("Oráculo 2ºDAM")
         }
-    }
-}
-
-data class BottomNavItem(val route: String, val icon: ImageVector, val label: String)
-
-@Composable
-@Preview
-fun AppPreview() {
-    AppTheme {
-        CustomScaffold()
-    }
+    )
 }
